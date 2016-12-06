@@ -1,0 +1,481 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ConscienceLoanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BankCard">
+          <Key>
+            <PropertyRef Name="BankID" />
+          </Key>
+          <Property Name="BankID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BankUserCardNumber" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="BankUserID" Type="int" />
+        </EntityType>
+        <EntityType Name="FinancialRecords">
+          <Key>
+            <PropertyRef Name="FinID" />
+          </Key>
+          <Property Name="FinID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FinExpenditure" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="FinIncome" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="FinTimes" Type="datetime" />
+          <Property Name="FinCurrentBalance" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="FinRemarks" Type="varchar" MaxLength="500" />
+          <Property Name="FinFinType" Type="varchar" MaxLength="50" />
+          <Property Name="FinPoints" Type="int" />
+          <Property Name="FinUserID" Type="int" />
+        </EntityType>
+        <EntityType Name="InvestmentRecord">
+          <Key>
+            <PropertyRef Name="InvID" />
+          </Key>
+          <Property Name="InvID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvMoney" Type="float" Nullable="false" />
+          <Property Name="InvTime" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="InvGetInterest" Type="float" />
+          <Property Name="InvTenderID" Type="int" />
+          <Property Name="InvUserID" Type="int" />
+        </EntityType>
+        <EntityType Name="Tender">
+          <Key>
+            <PropertyRef Name="TenID" />
+          </Key>
+          <Property Name="TenID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenTitle" Type="varchar" MaxLength="2000" Nullable="false" />
+          <Property Name="TenContent" Type="varchar(max)" Nullable="false" />
+          <Property Name="TenLumpSum" Type="int" Nullable="false" />
+          <Property Name="TenTheterm" Type="int" Nullable="false" />
+          <Property Name="TenMonthRateOfReturn" Type="float" Nullable="false" />
+          <Property Name="TenPromise" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="TenMinInvestment" Type="float" Nullable="false" />
+          <Property Name="TenStartTime" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="TenEndTime" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="TenTenderType" Type="varchar" MaxLength="4" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserInfo">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="UserPassword" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="TrueName" Type="varchar" MaxLength="30" />
+          <Property Name="UserIDCard" Type="varchar" MaxLength="18" />
+          <Property Name="UserSex" Type="varchar" MaxLength="2" />
+          <Property Name="UserAge" Type="int" />
+          <Property Name="UserPhone" Type="char" MaxLength="11" />
+          <Property Name="UserBirthplace" Type="varchar" MaxLength="500" />
+          <Property Name="InvitationCode" Type="varchar" MaxLength="30" />
+          <Property Name="UserType" Type="int" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“ConscienceLoan.dbo.FinancialRecordsHistory”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="FinancialRecordsHistory">
+          <Key>
+            <PropertyRef Name="FinID" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="FinID" Type="int" Nullable="false" />
+          <Property Name="FinExpenditure" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="FinIncome" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="FinTimes" Type="datetime" />
+          <Property Name="FinCurrentBalance" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="FinRemarks" Type="varchar" MaxLength="500" />
+          <Property Name="FinFinType" Type="varchar" MaxLength="50" />
+          <Property Name="FinPoints" Type="int" />
+          <Property Name="FinUserID" Type="int" />
+          <Property Name="rn" Type="bigint" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="TrueName" Type="varchar" MaxLength="30" />
+          <Property Name="UserIDCard" Type="varchar" MaxLength="18" />
+        </EntityType>
+        <Association Name="FK__BankCard__BankUs__164452B1">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="0..1" />
+          <End Role="BankCard" Type="Self.BankCard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="BankCard">
+              <PropertyRef Name="BankUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Financial__FinUs__398D8EEE">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="0..1" />
+          <End Role="FinancialRecords" Type="Self.FinancialRecords" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="FinancialRecords">
+              <PropertyRef Name="FinUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Investmen__InvTe__276EDEB3">
+          <End Role="Tender" Type="Self.Tender" Multiplicity="0..1" />
+          <End Role="InvestmentRecord" Type="Self.InvestmentRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tender">
+              <PropertyRef Name="TenID" />
+            </Principal>
+            <Dependent Role="InvestmentRecord">
+              <PropertyRef Name="InvTenderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Investmen__InvUs__286302EC">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="0..1" />
+          <End Role="InvestmentRecord" Type="Self.InvestmentRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="InvestmentRecord">
+              <PropertyRef Name="InvUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="RecordsHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="ConscienceLoanModelStoreContainer">
+          <EntitySet Name="BankCard" EntityType="Self.BankCard" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FinancialRecords" EntityType="Self.FinancialRecords" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InvestmentRecord" EntityType="Self.InvestmentRecord" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tender" EntityType="Self.Tender" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserInfo" EntityType="Self.UserInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FinancialRecordsHistory" EntityType="Self.FinancialRecordsHistory" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [FinancialRecordsHistory].[FinID] AS [FinID], 
+    [FinancialRecordsHistory].[FinExpenditure] AS [FinExpenditure], 
+    [FinancialRecordsHistory].[FinIncome] AS [FinIncome], 
+    [FinancialRecordsHistory].[FinTimes] AS [FinTimes], 
+    [FinancialRecordsHistory].[FinCurrentBalance] AS [FinCurrentBalance], 
+    [FinancialRecordsHistory].[FinRemarks] AS [FinRemarks], 
+    [FinancialRecordsHistory].[FinFinType] AS [FinFinType], 
+    [FinancialRecordsHistory].[FinPoints] AS [FinPoints], 
+    [FinancialRecordsHistory].[FinUserID] AS [FinUserID], 
+    [FinancialRecordsHistory].[rn] AS [rn], 
+    [FinancialRecordsHistory].[UserID] AS [UserID], 
+    [FinancialRecordsHistory].[UserName] AS [UserName], 
+    [FinancialRecordsHistory].[TrueName] AS [TrueName], 
+    [FinancialRecordsHistory].[UserIDCard] AS [UserIDCard]
+    FROM [dbo].[FinancialRecordsHistory] AS [FinancialRecordsHistory]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__BankCard__BankUs__164452B1" Association="Self.FK__BankCard__BankUs__164452B1">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="BankCard" EntitySet="BankCard" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Financial__FinUs__398D8EEE" Association="Self.FK__Financial__FinUs__398D8EEE">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="FinancialRecords" EntitySet="FinancialRecords" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Investmen__InvTe__276EDEB3" Association="Self.FK__Investmen__InvTe__276EDEB3">
+            <End Role="Tender" EntitySet="Tender" />
+            <End Role="InvestmentRecord" EntitySet="InvestmentRecord" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Investmen__InvUs__286302EC" Association="Self.FK__Investmen__InvUs__286302EC">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="InvestmentRecord" EntitySet="InvestmentRecord" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ConscienceLoanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BankCard">
+          <Key>
+            <PropertyRef Name="BankID" />
+          </Key>
+          <Property Name="BankID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BankUserCardNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BankUserID" Type="Int32" />
+          <NavigationProperty Name="UserInfo" Relationship="Self.FK__BankCard__BankUs__164452B1" FromRole="BankCard" ToRole="UserInfo" />
+        </EntityType>
+        <EntityType Name="InvestmentRecord">
+          <Key>
+            <PropertyRef Name="InvID" />
+          </Key>
+          <Property Name="InvID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvMoney" Type="Double" Nullable="false" />
+          <Property Name="InvTime" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="InvGetInterest" Type="Double" />
+          <Property Name="InvTenderID" Type="Int32" />
+          <Property Name="InvUserID" Type="Int32" />
+          <NavigationProperty Name="Tender" Relationship="Self.FK__Investmen__InvTe__276EDEB3" FromRole="InvestmentRecord" ToRole="Tender" />
+          <NavigationProperty Name="UserInfo" Relationship="Self.FK__Investmen__InvUs__286302EC" FromRole="InvestmentRecord" ToRole="UserInfo" />
+        </EntityType>
+        <EntityType Name="Tender">
+          <Key>
+            <PropertyRef Name="TenID" />
+          </Key>
+          <Property Name="TenID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenTitle" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TenContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TenLumpSum" Type="Int32" Nullable="false" />
+          <Property Name="TenTheterm" Type="Int32" Nullable="false" />
+          <Property Name="TenMonthRateOfReturn" Type="Double" Nullable="false" />
+          <Property Name="TenPromise" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TenMinInvestment" Type="Double" Nullable="false" />
+          <Property Name="TenStartTime" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TenEndTime" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TenTenderType" Type="String" MaxLength="4" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="InvestmentRecord" Relationship="Self.FK__Investmen__InvTe__276EDEB3" FromRole="Tender" ToRole="InvestmentRecord" />
+        </EntityType>
+        <EntityType Name="UserInfo">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="UserPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TrueName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UserIDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
+          <Property Name="UserSex" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="UserAge" Type="Int32" />
+          <Property Name="UserPhone" Type="String" MaxLength="11" FixedLength="true" Unicode="false" />
+          <Property Name="UserBirthplace" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="InvitationCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UserType" Type="Int32" />
+          <NavigationProperty Name="BankCard" Relationship="Self.FK__BankCard__BankUs__164452B1" FromRole="UserInfo" ToRole="BankCard" />
+          <NavigationProperty Name="InvestmentRecord" Relationship="Self.FK__Investmen__InvUs__286302EC" FromRole="UserInfo" ToRole="InvestmentRecord" />
+          <NavigationProperty Name="FinancialRecords" Relationship="ConscienceLoanModel.FK__Financial__FinUs__398D8EEE" FromRole="UserInfo" ToRole="FinancialRecords" />
+        </EntityType>
+        <Association Name="FK__BankCard__BankUs__164452B1">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="0..1" />
+          <End Role="BankCard" Type="Self.BankCard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="BankCard">
+              <PropertyRef Name="BankUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Investmen__InvTe__276EDEB3">
+          <End Role="Tender" Type="Self.Tender" Multiplicity="0..1" />
+          <End Role="InvestmentRecord" Type="Self.InvestmentRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tender">
+              <PropertyRef Name="TenID" />
+            </Principal>
+            <Dependent Role="InvestmentRecord">
+              <PropertyRef Name="InvTenderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Investmen__InvUs__286302EC">
+          <End Role="UserInfo" Type="Self.UserInfo" Multiplicity="0..1" />
+          <End Role="InvestmentRecord" Type="Self.InvestmentRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="InvestmentRecord">
+              <PropertyRef Name="InvUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ConscienceLoanEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BankCard" EntityType="Self.BankCard" />
+          <EntitySet Name="InvestmentRecord" EntityType="Self.InvestmentRecord" />
+          <EntitySet Name="Tender" EntityType="Self.Tender" />
+          <EntitySet Name="UserInfo" EntityType="Self.UserInfo" />
+          <AssociationSet Name="FK__BankCard__BankUs__164452B1" Association="Self.FK__BankCard__BankUs__164452B1">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="BankCard" EntitySet="BankCard" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Investmen__InvTe__276EDEB3" Association="Self.FK__Investmen__InvTe__276EDEB3">
+            <End Role="Tender" EntitySet="Tender" />
+            <End Role="InvestmentRecord" EntitySet="InvestmentRecord" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Investmen__InvUs__286302EC" Association="Self.FK__Investmen__InvUs__286302EC">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="InvestmentRecord" EntitySet="InvestmentRecord" />
+          </AssociationSet>
+          <EntitySet Name="FinancialRecords" EntityType="ConscienceLoanModel.FinancialRecords" />
+          <AssociationSet Name="FK__Financial__FinUs__398D8EEE" Association="ConscienceLoanModel.FK__Financial__FinUs__398D8EEE">
+            <End Role="UserInfo" EntitySet="UserInfo" />
+            <End Role="FinancialRecords" EntitySet="FinancialRecords" />
+          </AssociationSet>
+          <EntitySet Name="FinancialRecordsHistories" EntityType="ConscienceLoanModel.FinancialRecordsHistory" />
+          <FunctionImport Name="RecordsHistory" EntitySet="FinancialRecordsHistories" ReturnType="Collection(ConscienceLoanModel.FinancialRecordsHistory)">
+            <Parameter Name="type" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="FinancialRecords">
+          <Key>
+            <PropertyRef Name="FinID" />
+          </Key>
+          <Property Name="FinID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FinExpenditure" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FinIncome" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FinTimes" Type="DateTime" Precision="3" />
+          <Property Name="FinCurrentBalance" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FinRemarks" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="FinFinType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FinPoints" Type="Int32" />
+          <Property Name="FinUserID" Type="Int32" />
+          <NavigationProperty Name="UserInfo" Relationship="ConscienceLoanModel.FK__Financial__FinUs__398D8EEE" FromRole="FinancialRecords" ToRole="UserInfo" />
+        </EntityType>
+        <Association Name="FK__Financial__FinUs__398D8EEE">
+          <End Type="ConscienceLoanModel.UserInfo" Role="UserInfo" Multiplicity="0..1" />
+          <End Type="ConscienceLoanModel.FinancialRecords" Role="FinancialRecords" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserInfo">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="FinancialRecords">
+              <PropertyRef Name="FinUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="FinancialRecordsHistory">
+          <Key>
+            <PropertyRef Name="FinID" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="FinID" Type="Int32" Nullable="false" />
+          <Property Name="FinExpenditure" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FinIncome" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FinTimes" Type="DateTime" Precision="3" />
+          <Property Name="FinCurrentBalance" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FinRemarks" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="FinFinType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FinPoints" Type="Int32" />
+          <Property Name="FinUserID" Type="Int32" />
+          <Property Name="rn" Type="Int64" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="TrueName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UserIDCard" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ConscienceLoanModelStoreContainer" CdmEntityContainer="ConscienceLoanEntities">
+          <EntitySetMapping Name="BankCard">
+            <EntityTypeMapping TypeName="ConscienceLoanModel.BankCard">
+              <MappingFragment StoreEntitySet="BankCard">
+                <ScalarProperty Name="BankID" ColumnName="BankID" />
+                <ScalarProperty Name="BankUserCardNumber" ColumnName="BankUserCardNumber" />
+                <ScalarProperty Name="BankUserID" ColumnName="BankUserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InvestmentRecord">
+            <EntityTypeMapping TypeName="ConscienceLoanModel.InvestmentRecord">
+              <MappingFragment StoreEntitySet="InvestmentRecord">
+                <ScalarProperty Name="InvID" ColumnName="InvID" />
+                <ScalarProperty Name="InvMoney" ColumnName="InvMoney" />
+                <ScalarProperty Name="InvTime" ColumnName="InvTime" />
+                <ScalarProperty Name="InvGetInterest" ColumnName="InvGetInterest" />
+                <ScalarProperty Name="InvTenderID" ColumnName="InvTenderID" />
+                <ScalarProperty Name="InvUserID" ColumnName="InvUserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tender">
+            <EntityTypeMapping TypeName="ConscienceLoanModel.Tender">
+              <MappingFragment StoreEntitySet="Tender">
+                <ScalarProperty Name="TenID" ColumnName="TenID" />
+                <ScalarProperty Name="TenTitle" ColumnName="TenTitle" />
+                <ScalarProperty Name="TenContent" ColumnName="TenContent" />
+                <ScalarProperty Name="TenLumpSum" ColumnName="TenLumpSum" />
+                <ScalarProperty Name="TenTheterm" ColumnName="TenTheterm" />
+                <ScalarProperty Name="TenMonthRateOfReturn" ColumnName="TenMonthRateOfReturn" />
+                <ScalarProperty Name="TenPromise" ColumnName="TenPromise" />
+                <ScalarProperty Name="TenMinInvestment" ColumnName="TenMinInvestment" />
+                <ScalarProperty Name="TenStartTime" ColumnName="TenStartTime" />
+                <ScalarProperty Name="TenEndTime" ColumnName="TenEndTime" />
+                <ScalarProperty Name="TenTenderType" ColumnName="TenTenderType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserInfo">
+            <EntityTypeMapping TypeName="ConscienceLoanModel.UserInfo">
+              <MappingFragment StoreEntitySet="UserInfo">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
+                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
+                <ScalarProperty Name="UserIDCard" ColumnName="UserIDCard" />
+                <ScalarProperty Name="UserSex" ColumnName="UserSex" />
+                <ScalarProperty Name="UserAge" ColumnName="UserAge" />
+                <ScalarProperty Name="UserPhone" ColumnName="UserPhone" />
+                <ScalarProperty Name="UserBirthplace" ColumnName="UserBirthplace" />
+                <ScalarProperty Name="InvitationCode" ColumnName="InvitationCode" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FinancialRecords">
+            <EntityTypeMapping TypeName="ConscienceLoanModel.FinancialRecords">
+              <MappingFragment StoreEntitySet="FinancialRecords">
+                <ScalarProperty Name="FinUserID" ColumnName="FinUserID" />
+                <ScalarProperty Name="FinPoints" ColumnName="FinPoints" />
+                <ScalarProperty Name="FinFinType" ColumnName="FinFinType" />
+                <ScalarProperty Name="FinRemarks" ColumnName="FinRemarks" />
+                <ScalarProperty Name="FinCurrentBalance" ColumnName="FinCurrentBalance" />
+                <ScalarProperty Name="FinTimes" ColumnName="FinTimes" />
+                <ScalarProperty Name="FinIncome" ColumnName="FinIncome" />
+                <ScalarProperty Name="FinExpenditure" ColumnName="FinExpenditure" />
+                <ScalarProperty Name="FinID" ColumnName="FinID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FinancialRecordsHistories">
+            <EntityTypeMapping TypeName="ConscienceLoanModel.FinancialRecordsHistory">
+              <MappingFragment StoreEntitySet="FinancialRecordsHistory">
+                <ScalarProperty Name="UserIDCard" ColumnName="UserIDCard" />
+                <ScalarProperty Name="TrueName" ColumnName="TrueName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="rn" ColumnName="rn" />
+                <ScalarProperty Name="FinUserID" ColumnName="FinUserID" />
+                <ScalarProperty Name="FinPoints" ColumnName="FinPoints" />
+                <ScalarProperty Name="FinFinType" ColumnName="FinFinType" />
+                <ScalarProperty Name="FinRemarks" ColumnName="FinRemarks" />
+                <ScalarProperty Name="FinCurrentBalance" ColumnName="FinCurrentBalance" />
+                <ScalarProperty Name="FinTimes" ColumnName="FinTimes" />
+                <ScalarProperty Name="FinIncome" ColumnName="FinIncome" />
+                <ScalarProperty Name="FinExpenditure" ColumnName="FinExpenditure" />
+                <ScalarProperty Name="FinID" ColumnName="FinID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="RecordsHistory" FunctionName="ConscienceLoanModel.Store.RecordsHistory" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

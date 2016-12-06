@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="5be58e723edf4496ab00e7c7f49a98ec" Name="Diagram1">
+        <EntityTypeShape EntityType="ConscienceLoanModel.BankCard" Width="1.5" PointX="3" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ConscienceLoanModel.InvestmentRecord" Width="1.5" PointX="6" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ConscienceLoanModel.Tender" Width="1.5" PointX="3.75" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="ConscienceLoanModel.UserInfo" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <AssociationConnector Association="ConscienceLoanModel.FK__BankCard__BankUs__164452B1" ManuallyRouted="false" />
+        <AssociationConnector Association="ConscienceLoanModel.FK__Investmen__InvTe__276EDEB3" ManuallyRouted="false" />
+        <AssociationConnector Association="ConscienceLoanModel.FK__Investmen__InvUs__286302EC" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ConscienceLoanModel.FinancialRecords" Width="1.5" PointX="3" PointY="6.125" />
+        <AssociationConnector Association="ConscienceLoanModel.FK__Financial__FinUs__398D8EEE" />
+        <EntityTypeShape EntityType="ConscienceLoanModel.FinancialRecordsHistory" Width="1.5" PointX="6.375" PointY="7.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

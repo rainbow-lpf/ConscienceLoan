@@ -1,0 +1,12 @@
+﻿@using ConscienceLoan.Models
+@using Webdiyer.WebControls.Mvc
+@model PagedList<FinancialRecordsHistory>
+@Html.Partial("_FinHistoryTable", Model)
+<div class="row">
+    <div class="form-group col-md-3 col-sm-5 col-xs-12" style="margin-top:25px;">
+        <h5> 当前页 @Model.CurrentPageIndex 共 @Model.TotalPageCount 页, @Model.TotalItemCount 条</h5>
+    </div>
+    <div class="form-group col-md-9 col-sm-5 col-xs-12">
+        @Ajax.Pager(Model, new PagerOptions { PageIndexParameterName = "id", ContainerTagName = "ul", CssClass = "pagination", CurrentPagerItemTemplate = "<li class=\"active\"><a href=\"#\">{0}</a></li>", DisabledPagerItemTemplate = "<li class=\"disabled\"><a>{0}</a></li>", PagerItemTemplate = "<li>{0}</li>" }).AjaxOptions(a => a.SetUpdateTargetId("history"))
+    </div>
+</div>

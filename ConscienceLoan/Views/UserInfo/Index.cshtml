@@ -1,0 +1,534 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using ConscienceLoan.Models
+@using Webdiyer.WebControls.Mvc
+@model IPagedList<UserInfo>
+
+<!-- Font Awesome -->
+<link href="~/Bootstrap/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="~/Bootstrap/vendors/nprogress/nprogress.css" rel="stylesheet">
+<!-- iCheck -->
+<link href="~/Bootstrap/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="~/Bootstrap/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="~/Bootstrap/vendors/nprogress/nprogress.css" rel="stylesheet">
+<div ng-app="UserMessage" ng-controller="UserInfos">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>客户信息管理<small></small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Settings 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="heading">
+                        <div class="row">
+                            @*<div class="col-md-2 col-sm-12 col-xs-12  form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">显示</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <select ng-change="PageChage(x)" ng-model="x" ng-options="x for (x,y) in PageShowCount" class="form-control" tabindex="-1"></select>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-8 col-sm-12 col-xs-12 form-group">
+                                @*添加按钮*@
+                                <button id="build" type="button" class="btn  btn-success" data-toggle="modal" data-target="#addModal">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+                                </button>
+
+                                @*修改按钮*@
+                                <button id="btnEdit" type="button" class="btn   btn-warning" data-toggle="modal" ng-click="UpdateModal()">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>修改
+                                </button>
+
+                                @*删除按钮---无弹出框*@
+                                <button id="btnDel" type="button" class="btn  btn-danger" data-toggle="modal" data-target="#DeleteForm" ng-click="DeleteUsers()">
+                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>删除
+                                </button>
+                            </div>
+                            <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control " value="{{TrueName}}" ng-model="TrueName" placeholder="请输入关键词查找">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-primary" ng-click="Search()">搜 索</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="datatable-checkbox" class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="checkAll" name="checkAll" ng-model="master" ng-change="isSelectAll()"></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserID')">编号 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('TrueName')">姓名 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserIDCard')">身份证 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserSex')">性别 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserAge')">年龄 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserPhone')">手机号码 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserBirthplace')"> 籍 贯 <span class="caret"></span></th>
+                                    <th>邀请码</th>
+                                    <th>状 态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="user in UsersData | filter:TrueName | orderBy:order+OrderType|as:this:'filteredItems'">
+                                    <td><input type="checkbox" class="flat" name="checkbox" checked="checked" ng-model="user.selected" ng-change="isLabelChecked()"></td>
+                                    <td>{{user.UserID}}</td>
+                                    <td>{{user.TrueName}}</td>
+                                    <td>{{user.UserIDCard}}</td>
+                                    <td>{{user.UserSex}}</td>
+                                    <td>{{user.UserAge}}</td>
+                                    <td>{{user.UserPhone}}</td>
+                                    <td>{{user.UserBirthplace}}</td>
+                                    <td>{{user.InvitationCode}}</td>
+                                    <td ng-if="UserTypeCheck(user.UserType)">
+                                        {{userType}}
+                                    </td>
+                                    @*<td>
+                                            <div class="btn-group btn-group-xs">
+                                                <button type="button" class="btn btn-warning  btn-lg" data-toggle="modal" data-target="#myModal">修 改</button>
+                                                <button type="button" class="btn btn-danger">删 除</button>
+                                            </div>
+                                        </td>*@
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div ng-show="!filteredItems.length">
+                            <h3>当前页没有您所查找的数据，请输入关键词，点击搜索进行精确查找或者翻页</h3>
+                        </div>
+                        <div class="row">
+                            @if (ViewBag.Search)
+                            {
+                                <div class="form-group col-md-10 col-sm-5 col-xs-12">
+                                    @*@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))*@
+                                    @Html.Pager(Model, new PagerOptions { PageIndexParameterName = "id", ContainerTagName = "ul", CssClass = "pagination", CurrentPagerItemTemplate = "<li class=\"active\"><a href=\"#\">{0}</a></li>", DisabledPagerItemTemplate = "<li class=\"disabled\"><a>{0}</a></li>", PagerItemTemplate = "<li>{0}</li>" })
+                                </div>
+                                <div class="form-group col-md-2 col-sm-5 col-xs-12" style="margin-top:20px;">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control " value="{{JumpPage}}" ng-model="JumpPage" placeholder="请输入页码">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-primary" ng-click="Jump()">跳转</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                     
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加客户信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal form-label-left" novalidate>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">
+                                用户名 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="name" class="form-control col-md-7 col-xs-12" ng-model="addUser.UserName" data-validate-length-range="20" data-validate-words="2" name="name" required="required" type="text">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label for="password" class="control-label col-md-3">密 码 <span class="required">*</span></label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="password" type="password" name="password" ng-model="addUser.UserPassword" data-validate-length="6,8" class="form-control col-md-7 col-xs-12" required="required">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label for="password2" class="control-label col-md-3 col-sm-3 col-xs-12">确认密码 <span class="required">*</span></label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="password2" type="password" name="password2" ng-model="addUser.UserPassword" data-validate-linked="password" class="form-control col-md-7 col-xs-12" required="required">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">
+                                真实姓名 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="name" class="form-control col-md-7 col-xs-12" ng-model="addUser.TrueName" data-validate-length-range="20" data-validate-words="2" name="name" required="required" type="text">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sex">性  别 <span class="required">*</span></label>
+                            <p>
+                                <label class="control-label " for="sex">女 </label>
+                                <input type="radio" class="flat" name="gender" id="genderM" value="女" ng-model="updateUser.UserSex" checked="" required /> <label class="control-label" for="sex">男 </label>
+                                <input type="radio" class="flat" name="gender" id="genderF" value="男" ng-model="updateUser.UserSex" />
+                            </p>
+                        </div>
+
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="number">
+                                年 龄 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="number" name="number" required="required" ng-model="addUser.UserAge" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                籍 贯 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" ng-model="addUser.UserBirthplace" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                手机号码 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" ng-model="addUser.UserPhone" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">
+                                身份证号 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="email" id="email2" name="confirm_email" ng-model="addUser.UserIDCard" data-validate-linked="email" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                状    态 <span class="required">*</span>
+                            </label>
+                            <p>
+                                <label class="control-label " for="sex">解锁 </label>
+                                <input type="radio" class="flat" name="usertype" id="genderM" value="0" ng-model="updateUser.UserType" checked="" required /> <label class="control-label" for="sex">锁定 </label>
+                                <input type="radio" class="flat" name="usertype" id="genderF" value="1" ng-model="updateUser.UserType" />
+                            </p>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                邀 请 码 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" ng-model="addUser.InvitationCode" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12"><label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onm>关闭</button>
+                    <button type="button" class="btn btn-primary" ng-click="addSubmit()">提 交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--修改Modal-->
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改客户信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal form-label-left" novalidate>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">
+                                真实姓名 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="name" class="form-control col-md-7 col-xs-12" data-validate-length-range="20" data-validate-words="2" name="name" required="required" type="text" ng-model="updateUser.TrueName">
+                            </div>
+                        </div>
+
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sex">性  别 <span class="required">*</span></label>
+                            <p>
+                                <label class="control-label " for="sex">女 </label>
+                                <input type="radio" class="flat" name="gender" id="genderM" value="女" ng-model="updateUser.UserSex" checked="" required /> <label class="control-label" for="sex">男 </label>
+                                <input type="radio" class="flat" name="gender" id="genderF" value="男" ng-model="updateUser.UserSex" />
+                            </p>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="number">
+                                年 龄 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="number" name="number" required="required" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" ng-model="updateUser.UserAge">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                籍 贯 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12" ng-model="updateUser.UserBirthplace">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                手机号码 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12" ng-model="updateUser.UserPhone">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">
+                                身份证号 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12" ng-model="updateUser.UserIDCard">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                状    态 <span class="required">*</span>
+                            </label>
+                            <p>
+                                <label class="control-label " for="sex">解锁 </label>
+                                <input type="radio" class="flat" name="usertype" id="genderM" value="0" ng-model="updateUser.UserType" checked="" required /> <label class="control-label" for="sex">锁定 </label>
+                                <input type="radio" class="flat" name="usertype" id="genderF" value="1" ng-model="updateUser.UserType" />
+                            </p>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">
+                                邀 请 码 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="occupation" type="text" name="occupation" data-validate-length-range="5,20" class="optional form-control col-md-7 col-xs-12" ng-model="updateUser.InvitationCode">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onm>关闭</button>
+                    <button type="button" class="btn btn-primary" ng-click="updateSubmit()">提 交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @section Scripts{@{Html.RegisterMvcPagerScriptResource();}}
+</div>
+<script src="~/Bootstrap/vendors/jquery/dist/jquery.min.js"></script>
+<!-- FastClick -->
+<script src="~/Bootstrap/vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="~/Bootstrap/vendors/nprogress/nprogress.js"></script>
+<!-- 验证的JS -->
+<script src="~/Bootstrap/vendors/validator/validator.js"></script>
+<script src="~/Angularjs/angular.min.js"></script>
+<script type="text/javascript">
+    var app = angular.module("UserMessage", [], ["$provide", function ($provide) {
+        $provide.factory("UsersData", function () {
+            return @Html.Raw(ViewBag.Users);
+        });
+        $provide.factory("PageShowCount", function () {
+            return  {
+                "10行": 10,
+                "20行": 20,
+                "50行": 50,
+                "100行": 100,
+                "150行": 150,
+                "300行": 300,
+                "500行": 500
+            }
+        })
+    }]).filter("as", function ($parse) {
+        return function (value, context, path) {
+            return $parse(path).assign(context, value);
+        };
+    });
+    app.controller("UserInfos", ["$scope", "$http", "UsersData", "PageShowCount", function ($scope, $http, UsersData, PageShowCount) {
+        //显示数量的源数据
+        $scope.PageShowCount = PageShowCount;
+        $scope.UsersData = UsersData
+        $scope.btn = true;
+        //页面加载完后 进行默认排序
+        $scope.orderType = "UserID";
+        $scope.order = "";
+        var UpdateType = true;
+        //排序
+        $scope.ChangeOrder = function (type) {
+            $scope.orderType = type;
+            if ($scope.order === '') {
+                $scope.order = '-';
+            } else {
+                $scope.order = '';
+            }
+        }
+        //选择显示数量
+        $scope.PageChage = function (page) {
+            $scope.pageSize = page;
+            $http({
+                url: "/UserInfo/Index?pageSize=" + $scope.pageSize + "&page=" + 1,
+                method: "GET",
+            });
+        }
+        //checkbox选中数据的模型
+        $scope.model = {
+            selectedUserlList: []
+        }
+        //选中所有
+        $scope.isSelectAll = function () {
+            $scope.model.selectedUserlList = [];
+            if ($scope.master) {
+                $scope.master = true;
+                angular.forEach($scope.UsersData, function (item) {
+                    $scope.model.selectedUserlList.push(item);
+                });
+            }
+            else { $scope.master = false; }
+            angular.forEach($scope.UsersData, function (item) {
+                item.selected = $scope.master;
+            })
+        }
+        //单个选中
+        $scope.isLabelChecked = function () {
+            var _User = this.user
+            if (this.user.selected) {
+                $scope.model.selectedUserlList.push(_User);
+                if ($scope.model.selectedUserlList.length == $scope.UsersData.length) { $scope.master = true; }
+            } else {
+                $scope.master = false;
+                var index = $scope.model.selectedUserlList.indexOf(_User);
+                $scope.model.selectedUserlList.splice(index, 1);
+            }
+        }
+        $scope.DeleteUsers = function () {
+            if ($scope.model.selectedUserlList.length > 0) {
+                if (confirm("是否删除当前选中的数据")) {
+                    $http({
+                        url: "/UserInfo/DeleteUsers",
+                        data: $scope.model.selectedUserlList,
+                        method: "POST"
+                    }).success(function (response) {
+                        if (response === "1") {
+                            alert("删除成功");
+                            angular.forEach($scope.model.selectedUserlList, function (item) {
+                                var index = GetIndex(item.UserID);
+                                if (index !== -1) {
+                                    $scope.UsersData.splice(index, 1);
+                                    $scope.model.selectedUserlList = [];
+                                }
+                            });
+                        } else {
+                            alert("删除失败");
+                        }
+                    });
+                }
+            } else {
+                alert("对不起，请选中所删的数据，在操作")
+            }
+        }
+        //修改前验证
+        $scope.UpdateModal = function () {
+            if ($scope.model.selectedUserlList.length === 1) {
+                $scope.user = angular.copy($scope.model.selectedUserlList[0]);
+                $scope.updateUser = $scope.model.selectedUserlList[0];
+                $("#updateModal").modal('show');
+            } else {
+                alert("请选中一行数据进行修改");
+            }
+        }
+        //修改提交
+        $scope.updateSubmit = function () {
+            $("#updateModal").modal('hide');
+            var index = GetIndex($scope.updateUser.UserID);
+            $http({
+                method: "POST",
+                url: "/UserInfo/UpdateUser",
+                data: $scope.updateUser
+            }).success(function (response) {
+                if (response === "1") {
+                    alert("修改成功");
+                    $scope.UsersData[index] = $scope.updateUser;
+                    UserTypeCheck($scope.updateUser.UserType)
+                } else {
+                    alert("修改失败");
+                    $scope.UsersData[index] = $scope.user;
+                    $scope.updateUser = $scope.user;
+                    $scope.model.selectedUserlList[0] = $scope.user;
+                    UserTypeCheck($scope.user.UserType)
+                }
+            });
+        }
+        //添加提交
+        $scope.addSubmit = function () {
+            $("#addModal").modal('hide');
+            $http({
+                method: "POST",
+                url: "/UserInfo/AddUser",
+                data: $scope.addUser
+            }).success(function (response) {
+                if (response === "1") {
+                    $scope.UsersData.push($scope.addUser);
+                    alert("添加成功");
+                } else {
+                    alert("添加失败");
+                }
+            });
+        }
+        //搜索
+        $scope.Search = function () {
+            var name = angular.copy($scope.TrueName)
+            if (name === undefined ||name==="") {
+                location.href = "/UserInfo/Index?pageSize=100&page=1" 
+            } else {
+                location.href = "/UserInfo/Index?name=" + name
+            }
+        }
+        $scope.Jump = function () {
+            location.href = "/UserInfo/Index?pageSize=100&page="+$scope.JumpPage
+        }
+        $scope.UserTypeCheck = function (type) {
+            if (type === 1 || type === "1") {
+                return $scope.userType = "锁定"
+            }
+            return $scope.userType = "解锁"
+        }
+        //获取数据的索引位置
+        var GetIndex = function (id) {
+            var index = -1;
+            angular.forEach($scope.UsersData, function (itme, key) {
+                if (itme.UserID === id) {
+                    index = key;
+                    return;
+                }
+            });
+            return index;
+        }
+    }])
+</script>

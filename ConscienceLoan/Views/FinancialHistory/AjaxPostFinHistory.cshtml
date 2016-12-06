@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "IndexFin2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using ConscienceLoan.Models
+@using Webdiyer.WebControls.Mvc
+@model PagedList<FinancialRecordsHistory>
+<div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>资金操作历史记录<small></small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Settings 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    @using (Ajax.BeginForm("AjaxPostFinHistory", new RouteValueDictionary { { "id", "" } }, new AjaxOptions { UpdateTargetId = "history", InsertionMode = InsertionMode.Replace }, new RouteValueDictionary { { "id", "searchForm" } }))
+                    {
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                <input type="text"  id="dateinfo1"  name="startTime" placeholder="开始时间" class="form-control">
+                            </div>
+
+                            <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                <input type="text" id="dateinfo2" name="endTime" placeholder="结束时间" class="form-control">
+                            </div>
+                            <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                <div class="input-group">
+                                    <input id="name" class="form-control col-md-4 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="searchText" placeholder="请输入关键词搜索" type="text">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-primary" ng-click="Search()">搜 索</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div id="history">
+                        @Html.Partial("_AjaxPostFinHistory", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    @{Html.RegisterMvcPagerScriptResource();}
+    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+}
+<script src="~/Scripts/DataTime/jedate.js"></script>
+<script src="~/Bootstrap/vendors/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        // 时间的控制
+        jeDate({
+            dateCell: "#dateinfo1",
+            format: "YYYY-MM-DD hh:mm:ss",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) { alert(val) }
+        })
+        jeDate({
+            dateCell: "#dateinfo2",
+            format: "YYYY-MM-DD hh:mm:ss ",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) { alert(val) }
+        })
+    });
+</script>

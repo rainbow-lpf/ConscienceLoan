@@ -1,0 +1,411 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using ConscienceLoan.Models
+@using Webdiyer.WebControls.Mvc
+@model PagedList<FinancialRecordsHistory>
+
+<!-- Font Awesome -->
+<link href="~/Bootstrap/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="~/Bootstrap/vendors/nprogress/nprogress.css" rel="stylesheet">
+<!-- iCheck -->
+<link href="~/Bootstrap/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="~/Bootstrap/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="~/Bootstrap/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="~/Bootstrap/vendors/nprogress/nprogress.css" rel="stylesheet">
+<div ng-app="FinancialRecordsMessage" ng-controller="FinancialRecords">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>客户资金管理<small></small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Settings 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="heading">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-12 col-xs-12 form-group">
+                                @*添加按钮*@
+                                <button id="build" type="button" class="btn  btn-success" data-toggle="modal" data-target="#addModal">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+                                </button>
+
+                                @*修改按钮*@
+                                <button id="btnEdit" type="button" class="btn   btn-warning" data-toggle="modal" ng-click="UpdateModal()">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>修改
+                                </button>
+
+                                @*删除按钮---无弹出框*@
+                                <button id="btnDel" type="button" class="btn  btn-danger" data-toggle="modal" data-target="#DeleteForm" ng-click="DeleteUsers()">
+                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>删除
+                                </button>
+                            </div>
+                            <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control " value="{{TrueName}}" ng-model="TrueName" placeholder="请输入关键词查找">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-primary" ng-click="Search()">搜 索</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="datatable-checkbox" class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="checkAll" name="checkAll" ng-model="master" ng-change="isSelectAll()"></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinID')">编号 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserName')">用户名 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('TrueName')">真实姓名 <span class="caret"></span></th>
+                                    @*<th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinIDCard')">身份证号 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinExpenditure')">支出 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinIncome')">收入 <span class="caret"></span></th>*@
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinPoints')">积分 <span class="caret"></span></th>
+                                    @*<th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinFinType')"> 类型 <span class="caret"></span></th>
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinTimes')"> 时间 <span class="caret"></span></th>*@
+                                    <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinCurrentBalance')"> 当前余额 <span class="caret"></span></th>
+                                    @*<th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinRemarks')"> 备注 <span class="caret"></span></th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="Fin in FinancialRecordsData | filter:TrueName | orderBy:order+OrderType|as:this:'filteredItems'">
+                                    <td><input type="checkbox" class="flat" name="checkbox" checked="checked" ng-model="Fin.selected" ng-change="isLabelChecked()"></td>
+                                    <td>{{Fin.FinID}}</td>
+                                    <td>{{Fin.UserName}}</td>
+                                    <td>{{Fin.TrueName}}</td>
+                                    @*<td>{{Fin.FinIDCard}}</td>
+                                    <td>{{Fin.FinExpenditure}}</td>
+                                    <td>{{Fin.FinIncome}}</td>*@
+                                    <td>{{Fin.FinPoints}}</td>
+                                    @*<td>{{Fin.FinFinType}}</td>
+                                    <td>{{Fin.FinTimes}}</td>*@
+                                    <td>{{Fin.FinCurrentBalance}}</td>
+                                    @*<td>{{Fin.FinRemarks}}</td>*@
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div ng-show="!filteredItems.length">
+                            <h3>当前页没有您所查找的数据，请输入关键词，点击搜索进行精确查找或者翻页</h3>
+                        </div>
+                        <div class="row">
+                            @if (ViewBag.Search)
+                            {
+                                <div class="form-group col-md-10 col-sm-5 col-xs-12">
+                                    @Html.Pager(Model, new PagerOptions { PageIndexParameterName = "id", ContainerTagName = "ul", CssClass = "pagination", CurrentPagerItemTemplate = "<li class=\"active\"><a href=\"#\">{0}</a></li>", DisabledPagerItemTemplate = "<li class=\"disabled\"><a>{0}</a></li>", PagerItemTemplate = "<li>{0}</li>" })
+                                    @*@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))*@
+                                </div>
+                                <div class="form-group col-md-2 col-sm-5 col-xs-12" style="margin-top:20px;">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control " value="{{JumpPage}}" ng-model="JumpPage" placeholder="请输入页码">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-primary" ng-click="Jump()">跳转</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">客户资金操作</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal form-label-left" novalidate>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">
+                                用户名 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="name" class="form-control col-md-7 col-xs-12" ng-model="updateFin.UserName" data-validate-length-range="20" data-validate-words="2" name="name" required="required" type="text">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">
+                                真实姓名 <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="name" class="form-control col-md-7 col-xs-12" ng-model="updateFin.TrueName" data-validate-length-range="20" data-validate-words="2" name="name" required="required" type="text">
+                            </div>
+                        </div>
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="number">
+                                    操作类型<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-9 col-xs-12">
+                                    <select ng-change="PageChage(doType)" ng-model="doType"  class="form-control" tabindex="-1">
+                                        <option value="0">支出</option>
+                                        <option value="1">收入</option>
+                                    </select>
+                                </div>
+                            </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                操作金额<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="number" name="number" required="required" ng-model="doMoney" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                操作积分<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="number" name="number" required="required" ng-model="doFinPoints" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                备注<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <textarea id="message" required="required" class="form-control" ng-model="updateFin.FinRemarks" name="message" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="Come on! You need to enter at least a 20 caracters long comment.."
+                                          data-parsley-validation-threshold="10"></textarea>
+                            </div>
+                        </div>
+                        @*<div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="number">
+                                当前余额<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="number" name="number" required="required" ng-model="updateFin.FinCurrentBalance" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12"value="{{updateFin.FinCurrentBalance-}}" readonly>
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="number">
+                                当前积分<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="number" name="number" required="required" ng-model="updateFin.FinPoints" data-validate-minmax="10,100" class="form-control col-md-7 col-xs-12" readonly value="{{updateFin.FinPoints-updateFin.DoFinPoints}}">
+                            </div>
+                        </div>*@
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onm>关闭</button>
+                    <button type="button" class="btn btn-primary" ng-click="updateSubmit()">提 交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{@{Html.RegisterMvcPagerScriptResource();}}
+ <!-- Bootstrap -->
+<script src="~/Bootstrap/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/Bootstrap/vendors/jquery/dist/jquery.min.js"></script>
+<!-- FastClick -->
+<script src="~/Bootstrap/vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="~/Bootstrap/vendors/nprogress/nprogress.js"></script>
+<!-- 验证的JS -->
+<script src="~/Bootstrap/vendors/validator/validator.js"></script>
+<script src="~/Angularjs/angular.min.js"></script>
+<script type="text/javascript">
+    var app = angular.module("FinancialRecordsMessage", [], ["$provide", function ($provide) {
+        $provide.factory("FinancialRecordsData", function () {
+            return @Html.Raw(ViewBag.Fin);
+        });
+    }]).filter("as", function ($parse) {
+        return function (value, context, path) {
+            return $parse(path).assign(context, value);
+        };
+    });
+    app.controller("FinancialRecords", ["$scope", "$http", "FinancialRecordsData", function ($scope, $http, FinancialRecordsData) {
+        $scope.FinancialRecordsData = FinancialRecordsData
+        //页面加载完后 进行默认排序
+        $scope.orderType = "FinID";
+        $scope.order = "";
+        var UpdateType = true;
+        //排序
+        $scope.ChangeOrder = function (type) {
+            $scope.orderType = type;
+            if ($scope.order === '') {
+                $scope.order = '-';
+            } else {
+                $scope.order = '';
+            }
+        }
+        //选择显示数量
+        $scope.PageChage = function (doType) {
+            if (doType === "0") {
+                $scope.updateFin.FinFinType = "支出"
+            } else {
+                $scope.updateFin.FinFinType = "收入"
+            }
+        }
+        //checkbox选中数据的模型
+        $scope.model = {
+            selectedFinlList: []
+        }
+        //选中所有
+        $scope.isSelectAll = function () {
+            $scope.model.selectedFinlList = [];
+            if ($scope.master) {
+                $scope.master = true;
+                angular.forEach($scope.FinancialRecordsData, function (item) {
+                    $scope.model.selectedFinlList.push(item);
+                });
+            }
+            else { $scope.master = false; }
+            angular.forEach($scope.FinancialRecordsData, function (item) {
+                item.selected = $scope.master;
+            })
+        }
+        //单个选中
+        $scope.isLabelChecked = function () {
+            var _User = this.Fin
+            if (this.Fin.selected) {
+                $scope.model.selectedFinlList.push(_User);
+                if ($scope.model.selectedFinlList.length == $scope.FinancialRecordsData.length) { $scope.master = true; }
+            } else {
+                $scope.master = false;
+                var index = $scope.model.selectedFinlList.indexOf(_User);
+                $scope.model.selectedFinlList.splice(index, 1);
+            }
+        }
+        $scope.DeleteUsers = function () {
+            if ($scope.model.selectedFinlList.length > 0) {
+                if (confirm("是否删除当前选中的数据")) {
+                    $http({
+                        url: "/FinancialRecords/DeleteUsers",
+                        data: $scope.model.selectedFinlList,
+                        method: "POST"
+                    }).success(function (response) {
+                        if (response === "1") {
+                            alert("删除成功");
+                            angular.forEach($scope.model.selectedFinlList, function (item) {
+                                var index = GetIndex(item.FinID);
+                                if (index !== -1) {
+                                    $scope.FinancialRecordsData.splice(index, 1);
+                                    $scope.model.selectedFinlList = [];
+                                }
+                            });
+                        } else {
+                            alert("删除失败");
+                        }
+                    });
+                }
+            } else {
+                alert("对不起，请选中所删的数据，在操作")
+            }
+        }
+        //修改前验证
+        $scope.UpdateModal = function () {
+            if ($scope.model.selectedFinlList.length === 1) {
+                $scope.fin = angular.copy($scope.model.selectedFinlList[0]);
+                $scope.updateFin = $scope.model.selectedFinlList[0];
+                $("#updateModal").modal('show');
+            } else {
+                alert("请选中一行数据进行修改");
+            }
+        }
+        //资金操作
+        $scope.updateSubmit = function () {
+            $("#updateModal").modal('hide');
+            var index = GetIndex($scope.updateFin.FinID);
+            if ($scope.doType === "0") {
+                if ($scope.updateFin.FinCurrentBalance < $scope.doMoney) { alert("对不起，当前客户余额不够支出，请进行充值"); return; }
+                $scope.updateFin.FinExpenditure = $scope.doMoney;
+                $scope.updateFin.FinCurrentBalance -= $scope.updateFin.FinExpenditure;
+                $scope.updateFin.FinPoints -= $scope.updateFin.FinExpenditure;
+            } else {
+                $scope.updateFin.FinIncome = $scope.doMoney;
+                $scope.updateFin.FinCurrentBalance += $scope.updateFin.FinIncome;
+                $scope.updateFin.FinPoints += $scope.doFinPoints;
+            }
+            $http({
+                method: "POST",
+                url: "/FinancialRecords/UpdateFin",
+                data: $scope.updateFin
+            }).success(function (response) {
+                if (response === "1") {
+                    alert("修改成功");
+                    $scope.FinancialRecordsData[index] = $scope.updateFin;
+                    UserTypeCheck($scope.updateFin.UserType)
+                } else {
+                    alert("修改失败");
+                    $scope.FinancialRecordsData[index] = $scope.fin;
+                    $scope.updateFin = $scope.fin;
+                    $scope.model.selectedFinlList[0] = $scope.fin;
+                    UserTypeCheck($scope.user.UserType)
+                }
+            });
+        }
+        //添加提交
+        $scope.addSubmit = function () {
+            $("#addModal").modal('hide');
+            $http({
+                method: "POST",
+                url: "/FinancialRecords/AddUser",
+                data: $scope.addUser
+            }).success(function (response) {
+                if (response === "1") {
+                    $scope.FinancialRecordsData.push($scope.addUser);
+                    alert("添加成功");
+                } else {
+                    alert("添加失败");
+                }
+            });
+        }
+        //搜索
+        $scope.Search = function () {
+            var name = angular.copy($scope.TrueName)
+            if (name === undefined || name === "") {
+                location.href = "/FinancialRecords/Index?pageSize=100&page=1"
+            } else {
+                location.href = "/FinancialRecords/Index?name=" + name
+            }
+        }
+        $scope.Jump = function () {
+            location.href = "/FinancialRecords/Index?pageSize=100&page=" + $scope.JumpPage
+        }
+        //获取数据的索引位置
+        var GetIndex = function (id) {
+            var index = -1;
+            angular.forEach($scope.FinancialRecordsData, function (itme, key) {
+                if (itme.FinID === id) {
+                    index = key;
+                    return;
+                }
+            });
+            return index;
+        }
+    }])
+</script>

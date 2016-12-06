@@ -1,0 +1,42 @@
+﻿
+@using ConscienceLoan.Models
+@using Webdiyer.WebControls.Mvc
+@using System.Data
+@model PagedList<FinancialRecordsHistory>
+<div>
+    <table id="datatable-checkbox" @*class="table table-striped jambo_table bulk_action"*@ class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinID')">编号 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('UserName')">用户名 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('TrueName')">真实姓名 <span class="caret"></span></th>
+                @*<th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinIDCard')">身份证号 <span class="caret"></span></th>*@
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinExpenditure')">支出 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinIncome')">收入 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinPoints')">积分 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinFinType')"> 类型 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinTimes')"> 时间 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinCurrentBalance')"> 当前余额 <span class="caret"></span></th>
+                <th ng-class="{droup:order===''}" ng-click="ChangeOrder('FinRemarks')"> 备注 <span class="caret"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FinID</td>
+                    <td>@item.UserName</td>
+                    <td>@item.TrueName</td>
+                    @*<td>@item.UserIDCard</td>*@
+                    <td>@item.FinExpenditure</td>
+                    <td>@item.FinIncome</td>
+                    <td>@item.FinPoints</td>
+                    <td>@item.FinFinType</td>
+                    <td>@item.FinTimes</td>
+                    <td>@item.FinCurrentBalance</td>
+                    <td>@item.FinRemarks</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
